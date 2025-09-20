@@ -121,7 +121,7 @@ Showcase your functional API using detailed visual documentation. Create a `scre
 
 ## Bonus Tasks (Optional-Additional Points)
 
-### Live API Demo via ngrok (+5% extra credit)
+### Live API Demo via ngrok (10% points)
 **For Advanced Students**: Deploy your API using ngrok for live instructor testing
 
 **Requirements**:
