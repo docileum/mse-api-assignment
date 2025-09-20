@@ -149,10 +149,10 @@ Showcase your functional API using detailed visual documentation. Create a `scre
 2. Load data into PostgreSQL database with proper schema
 3. Implement all 3-5 API endpoints with proper validation
 4. **Provide clear screenshots demonstrating full functionality**
-5. Include complete setup instructions and dependencies
+
 
 ## Submission Guidelines
-1. **Code**: Push all code to your GitHub repository
+1. **Code**: Push all code to your GitHub repository. This is what will be used as your submission. Instructors will clone your repository on the final submission day.
 2. **Screenshots**: Include `screenshots/` folder with all required images
 3. **Documentation**: Update README with your specific setup instructions
 4. **Database**: Include SQL schema and sample data files
