@@ -3,6 +3,11 @@
 ## Overview
 Build a comprehensive REST API to serve Malawi Stock Exchange (MSE) historical data. You'll process PDF reports spanning 2017-present, handle varying data formats, store data in PostgreSQL, and create API endpoints for data access.
 
+## About Malawi Stock Exchange 
+- **Website:** [https://mse.co.mw](https://mse.co.mw)
+- **Daily Reports:** The website provides daily reports in PDF format [here](https://mse.co.mw/market/reports).
+- **Listed Companies:** You can find a complete list of all companies (also referred to as counters) listed on the exchange [here](https://mse.co.mw/listing/mainboard). Please ensure you collect information for all listed companies by navigating through all pages.
+
 ## Timeline (4 Weeks)
 
 ### Week 1: Data Extraction & Processing (Sept 22-28)
