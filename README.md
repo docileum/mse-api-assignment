@@ -149,7 +149,7 @@ Build a comprehensive REST API to serve Malawi Stock Exchange (MSE) historical d
 
 **Response**: Latest available price data including change and change percentage from previous day
 
-## API Requirements
+#### API Requirements
 - [ ] Use **Pydantic models** for request validation and response schemas
 - [ ] Return proper **HTTP status codes** (200, 400, 404, 422, 500)
 - [ ] Include **error handling** with descriptive error messages
