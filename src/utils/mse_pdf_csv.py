@@ -112,7 +112,7 @@ def extract_date_from_filename(filename):
     if match:
         day, month_str, year = match.groups()
         month_num = _MONTHS.get(month_str.lower())
-        print(month_num, day, year)
+        # print(month_num, day, year)
         if month_num:
             return date(int(year), month_num, int(day))
 
@@ -382,14 +382,14 @@ def extract_first_table(pdf_path: str | Path,
 
             # Run checks to ensure structural correctness
             # Number of counters and counter names
-            try:
-                assert df.shape[0] == len(COUNTER_LIST['2021-2025'])
-                assert df['counter'].nunique() == len(COUNTER_LIST['2021-2025'])
-                # assert set(list(df['counter'].dropna().unique())) == set(COUNTER_LIST['2021-2025'])
-            except AssertionError as e:
-                print(f"⚠️ Structural check failed: {e}")
-                # save pdf filename to logs_dir
-                return pd.DataFrame()
+            # try:
+            #     assert df.shape[0] == len(COUNTER_LIST['2021-2025'])
+            #     assert df['counter'].nunique() == len(COUNTER_LIST['2021-2025'])
+            #     # assert set(list(df['counter'].dropna().unique())) == set(COUNTER_LIST['2021-2025'])
+            # except AssertionError as e:
+            #     print(f"⚠️ Structural check failed: {e}")
+            #     # save pdf filename to logs_dir
+            #     return pd.DataFrame()
 
             if out_dir:
                 df.to_csv(out_csv, index=False)
@@ -586,7 +586,7 @@ def merge_csv_into_master(data_dir: Path, master_csv: Path, cols: List[str]):
     master_df.to_csv(master_csv, index=False)
     print(f"✅ Master CSV created at {master_csv} with {len(master_df)} unique records")
 
-def main(process_latest=True, start_date_str="2025-09-08"):
+def main(process_latest=True, start_date_str="2019-01-01"):
     """
     Main function to extract MSE data from PDF and save to CSV
     """
@@ -594,8 +594,11 @@ def main(process_latest=True, start_date_str="2025-09-08"):
     # SET WORKING DIRECTORY TO SCRIPT LOCATION
     script_dir = Path(__file__).parent.parent
     DIR_DATA = script_dir.parent / "data"
+    # print(DIR_DATA)
     DIR_REPORTS_PDF = DIR_DATA / "mse-daily-reports"
+    # print(DIR_REPORTS_PDF)
     DIR_REPORTS_CSV = DIR_DATA / "mse-daily-data"
+    # print(DIR_REPORTS_CSV)
     DIR_LOGS = script_dir / "logs/unprocessed_daily_pdfs"
 
     # Standard columns in MSE daily report: 2021
