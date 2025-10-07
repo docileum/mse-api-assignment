@@ -91,21 +91,70 @@ Build a comprehensive REST API to serve Malawi Stock Exchange (MSE) historical d
 
 
 ### Task 3: API Development (20%)
-**Objective**: Complete the REST API endpoints
+**Objective**: Complete the REST API endpoints. Your API must implement the following 5 endpoints:
+#### 1. GET /companies
+**Description**: Return all companies listed on the MSE
 
-**Required Endpoints**: *[Details will be updated later]*
-1. `GET /endpoint1` - [Description to be provided]
-2. `GET /endpoint2` - [Description to be provided]
-3. `GET /endpoint3` - [Description to be provided]
-4. `GET /endpoint4` - [Description to be provided]
-5. `GET /endpoint5` - [Description to be provided]
+**Query Parameters**:
+- `sector` (optional): Filter by sector
 
-**API Requirements**:
-- [ ] Proper error handling and HTTP status codes
-- [ ] Input validation using Pydantic models
-- [ ] Query parameters for filtering as required
-- [ ] Comprehensive API documentation
+**Example**: `GET /companies?sector=Banking`
 
+**Response**: List of companies with ticker, name, sector, listing date
+
+#### 2. GET /companies/{ticker}
+**Description**: Get detailed information about a specific company
+
+**Path Parameters**:
+- `ticker` (required): Stock ticker symbol (e.g., "NICO")
+
+**Example**: `GET /companies/NICO`
+
+**Response**: Company details including ticker, full name, sector, listing date, description, and total records count
+
+#### 3. GET /prices/daily
+**Description**: Get daily stock prices with date filtering
+
+**Query Parameters**:
+- `ticker` (required): Stock ticker symbol
+- `start_date` (optional): Start date (YYYY-MM-DD)
+- `end_date` (optional): End date (YYYY-MM-DD)
+- `limit` (optional): Maximum records to return (default: 100, max: 1000)
+
+**Example**: `GET /prices/daily?ticker=NICO&start_date=2024-01-01&end_date=2024-12-31`
+
+**Response**: Daily price data with open, high, low, close, volume, and trades
+
+
+#### 4. GET /prices/range
+**Description**: Get price data by month or year
+
+**Query Parameters**:
+- `ticker` (required): Stock ticker symbol
+- `year` (required): Year (e.g., 2024)
+- `month` (optional): Month (1-12). If omitted, returns entire year
+
+**Example**: `GET /prices/range?ticker=NICO&year=2024&month=6`
+
+**Response**: All daily prices for the specified period, plus summary statistics (period high, low, total volume, etc.)
+
+
+#### 5. GET /prices/latest
+**Description**: Get the most recent trading day prices
+
+**Query Parameters**:
+- `ticker` (optional): Stock ticker symbol. If omitted, returns latest prices for all stocks
+
+**Example**: `GET /prices/latest?ticker=NICO`
+
+**Response**: Latest available price data including change and change percentage from previous day
+
+## API Requirements
+- [ ] Use **Pydantic models** for request validation and response schemas
+- [ ] Return proper **HTTP status codes** (200, 400, 404, 422, 500)
+- [ ] Include **error handling** with descriptive error messages
+- [ ] All dates must use **YYYY-MM-DD** format
+- [ ] Test all endpoints in FastAPI's interactive docs (`/docs`)
 
 ### Task 4: Project Demo & Documentation (40%)
 **Objective**:
