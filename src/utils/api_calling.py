@@ -1,15 +1,15 @@
 import os
 from urllib.parse import quote_plus
 import pandas as pd
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from datetime import date
 
 # =============================
-# FastAPI App
+# FastAPI app
 # =============================
 app = FastAPI(title="MSE API", version="1.0")
 
@@ -30,14 +30,14 @@ engine = create_engine(
 )
 
 # =============================
-# Helper function
+# Helper function to run queries
 # =============================
-def run_query(sql: str, params: tuple = ()):
+def run_query(sql: str, params: dict = None):
     df = pd.read_sql(sql, engine, params=params)
     return df.to_dict(orient="records")
 
 # =============================
-# DATA MODELS DEFINITION
+# DATA MODELS
 # =============================
 class Counter(BaseModel):
     counter_id: str
@@ -45,33 +45,61 @@ class Counter(BaseModel):
     name: Optional[str] = None
     date_listed: Optional[date] = None  
     listing_price: Optional[float] = None
+    sector: Optional[str] = None  
 
-class Price(BaseModel):
+class PriceDaily(BaseModel):
     counter_id: str
-    daily_range_high: Optional[float] = None
-    daily_range_low: Optional[float] = None
-    buy_price: Optional[float] = None
-    sell_price: Optional[float] = None
-    previous_closing_price: Optional[float] = None
-    today_closing_price: Optional[float] = None
+    trade_date: Optional[date] = None
+    open_mwk: Optional[float] = None
+    high_mwk: Optional[float] = None
+    low_mwk: Optional[float] = None
+    close_mwk: Optional[float] = None
+    volume: Optional[int] = None
 
 # =============================
 # Endpoints
 # =============================
+
+# Root endpoint
 @app.get("/", summary="Root Endpoint")
 def root():
     return {"message": "API is running"}
 
+# Counters endpoint
 @app.get("/counters", response_model=List[Counter], summary="Get all counters")
 def get_counters():
     sql = "SELECT * FROM counters"
     return run_query(sql)
 
-@app.get("/prices", response_model=List[Price], summary="Get daily prices")
+# Companies by sector endpoint
+@app.get("/companies", response_model=List[Counter], summary="Get companies by sector")
+def get_companies_by_sector(sector: str = Query(..., description="Sector to filter by")):
+    query = text("SELECT * FROM counters WHERE sector ILIKE :sector")
+    return run_query(query, {"sector": sector})
+
+# Prices endpoint — latest 50 daily prices
+@app.get("/prices", response_model=List[PriceDaily], summary="Get latest daily prices")
 def get_prices(counter_id: Optional[str] = Query(None, description="Filter by counter_id")):
-    if counter_id:
-        sql = "SELECT * FROM prices_daily WHERE counter_id = %s"
-        return run_query(sql, (counter_id,))
-    else:
-        sql = "SELECT * FROM prices_daily"
-        return run_query(sql)
+    with engine.connect() as conn:
+        if counter_id:
+            query = text("""
+                SELECT *
+                FROM prices_daily
+                WHERE counter_id = :counter_id
+                ORDER BY trade_date DESC
+                LIMIT 10
+            """)
+            result = conn.execute(query, {"counter_id": counter_id}).fetchall()
+            if not result:
+                raise HTTPException(status_code=404, detail="No prices found for this counter_id")
+        else:
+            query = text("""
+                SELECT *
+                FROM prices_daily
+                ORDER BY trade_date DESC
+                LIMIT 10
+            """)
+            result = conn.execute(query).fetchall()
+        
+        # Convert SQLAlchemy rows to dicts
+        return [dict(row._mapping) for row in result]
